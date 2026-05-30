@@ -1,0 +1,263 @@
+// Prosperity Business - Schema Prisma
+// Source de vérité : docs/BRIEF-PLATEFORME-PROSPERITY-BUSINESS.md (Section 3)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// ENUMS
+// ────────────────────────────────────────────────────────────────────────────
+
+enum Domaine {
+  agriculture
+  formation
+}
+
+enum TypeMedia {
+  photo
+  video
+}
+
+enum ModaliteFormation {
+  presentiel
+  terrain
+  hybride
+}
+
+enum SujetLead {
+  information
+  partenariat
+  formation
+  commande
+  autre
+}
+
+enum StatutLead {
+  nouveau
+  lu
+  en_cours
+  traite
+  archive
+}
+
+enum StatutArticle {
+  brouillon
+  programme
+  publie
+  archive
+}
+
+enum RoleUser {
+  super_admin
+  admin_contenu
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// SERVICE
+// ────────────────────────────────────────────────────────────────────────────
+
+model Service {
+  id                String   @id @default(uuid()) @db.Uuid
+  titre             String   @db.VarChar(100)
+  slug              String   @unique
+  descriptionCourte String   @map("description_courte") @db.VarChar(200)
+  descriptionLongue String?  @map("description_longue")
+  domaine           Domaine
+  sousCategorie     String?  @map("sous_categorie")
+  icone             String?
+  imageUrl          String?  @map("image_url")
+  ordreAffichage    Int      @default(0) @map("ordre_affichage")
+  estPublie         Boolean  @default(true) @map("est_publie")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  formations Formation[]
+  medias     GalleryMedia[]
+
+  @@index([domaine, estPublie])
+  @@index([ordreAffichage])
+  @@map("services")
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// FORMATION
+// ────────────────────────────────────────────────────────────────────────────
+
+model Formation {
+  id               String            @id @default(uuid()) @db.Uuid
+  titre            String
+  slug             String            @unique
+  cible            String
+  objectifs        String[]
+  duree            String?
+  modalite         ModaliteFormation
+  cout             String?
+  prochaineSession DateTime?         @map("prochaine_session") @db.Date
+  description      String?
+  imageUrl         String?           @map("image_url")
+  estPublie        Boolean           @default(true) @map("est_publie")
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime          @updatedAt @map("updated_at") @db.Timestamptz
+
+  serviceId String?  @map("service_id") @db.Uuid
+  service   Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+
+  @@index([estPublie])
+  @@index([prochaineSession])
+  @@map("formations")
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// ARTICLE (blog / actualités)
+// ────────────────────────────────────────────────────────────────────────────
+
+model Article {
+  id                 String        @id @default(uuid()) @db.Uuid
+  titre              String
+  slug               String        @unique
+  contenu            String
+  extrait            String?       @db.VarChar(300)
+  imagePrincipaleUrl String?       @map("image_principale_url")
+  auteur             String        @default("Prosperity Business")
+  tags               String[]
+  statut             StatutArticle @default(brouillon)
+  estPublie          Boolean       @default(false) @map("est_publie")
+  publieLe           DateTime?     @map("publie_le") @db.Timestamptz
+  createdAt          DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([estPublie, publieLe])
+  @@index([tags])
+  @@map("articles")
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// GALLERY MEDIA
+// ────────────────────────────────────────────────────────────────────────────
+
+model GalleryMedia {
+  id        String    @id @default(uuid()) @db.Uuid
+  type      TypeMedia
+  url       String
+  legende   String?
+  altText   String    @map("alt_text")
+  categorie String?
+  ordre     Int       @default(0)
+  estPublie Boolean   @default(true) @map("est_publie")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  serviceId String?  @map("service_id") @db.Uuid
+  service   Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+
+  @@index([categorie, estPublie])
+  @@index([serviceId])
+  @@map("gallery_media")
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// LEAD (formulaire de contact)
+// ────────────────────────────────────────────────────────────────────────────
+
+model Lead {
+  id         String     @id @default(uuid()) @db.Uuid
+  nomComplet String     @map("nom_complet")
+  email      String
+  telephone  String?
+  sujet      SujetLead
+  message    String
+  statut     StatutLead @default(nouveau)
+  notesAdmin String?    @map("notes_admin")
+  ipHash     String?    @map("ip_hash")
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  traiteLe   DateTime?  @map("traite_le") @db.Timestamptz
+
+  @@index([statut, createdAt])
+  @@index([email])
+  @@map("leads")
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// TEAM MEMBER
+// ────────────────────────────────────────────────────────────────────────────
+
+model TeamMember {
+  id         String   @id @default(uuid()) @db.Uuid
+  nomComplet String   @map("nom_complet")
+  poste      String
+  bio        String?
+  photoUrl   String?  @map("photo_url")
+  ordre      Int      @default(0)
+  estPublie  Boolean  @default(true) @map("est_publie")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([estPublie, ordre])
+  @@map("team_members")
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// TESTIMONIAL
+// ────────────────────────────────────────────────────────────────────────────
+
+model Testimonial {
+  id            String   @id @default(uuid()) @db.Uuid
+  auteurNom     String   @map("auteur_nom")
+  auteurQualite String?  @map("auteur_qualite")
+  contenu       String   @db.VarChar(300)
+  note          Int?
+  photoUrl      String?  @map("photo_url")
+  estPublie     Boolean  @default(false) @map("est_publie")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([estPublie])
+  @@map("testimonials")
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// USER (admins CMS)
+// ────────────────────────────────────────────────────────────────────────────
+
+model User {
+  id                String    @id @default(uuid()) @db.Uuid
+  email             String    @unique
+  nomComplet        String    @map("nom_complet")
+  passwordHash      String    @map("password_hash")
+  role              RoleUser  @default(admin_contenu)
+  estActif          Boolean   @default(true) @map("est_actif")
+  derniereConnexion DateTime? @map("derniere_connexion") @db.Timestamptz
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([email])
+  @@map("users")
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// SITE CONFIG (ligne unique)
+// ────────────────────────────────────────────────────────────────────────────
+
+model SiteConfig {
+  id              String   @id @default(uuid()) @db.Uuid
+  nomSite         String   @map("nom_site")
+  slogan          String?
+  emailContact    String   @map("email_contact")
+  telephone1      String?  @map("telephone_1")
+  telephone2      String?  @map("telephone_2")
+  adresse         String?
+  facebookUrl     String?  @map("facebook_url")
+  instagramUrl    String?  @map("instagram_url")
+  whatsappNumber  String?  @map("whatsapp_number")
+  logoUrl         String?  @map("logo_url")
+  faviconUrl      String?  @map("favicon_url")
+  metaDescription String?  @map("meta_description") @db.VarChar(160)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("site_config")
+}
