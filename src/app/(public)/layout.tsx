@@ -22,11 +22,11 @@ export default async function PublicLayout({ children }: { children: React.React
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-border bg-white md:bg-white/95 md:backdrop-blur">
         <nav className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <Link
             href="/"
-            className="truncate font-display text-base font-bold text-[var(--color-forest)] sm:text-lg md:text-xl"
+            className="min-w-0 flex-1 truncate font-display text-sm font-bold text-[var(--color-forest)] sm:text-lg md:flex-none md:text-xl"
           >
             {config.nomSite}
           </Link>
@@ -44,7 +44,7 @@ export default async function PublicLayout({ children }: { children: React.React
             ))}
           </ul>
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             {whatsappHref && (
               <a
                 href={whatsappHref}

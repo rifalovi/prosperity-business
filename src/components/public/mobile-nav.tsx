@@ -50,9 +50,9 @@ export function MobileNav({
         aria-expanded={open}
         aria-controls="mobile-nav-drawer"
         onClick={() => setOpen(true)}
-        className="inline-flex size-10 items-center justify-center rounded-lg border border-border bg-white text-foreground transition-colors hover:bg-[var(--color-cream)] md:hidden"
+        className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg border border-[var(--color-forest)]/20 bg-white text-[var(--color-forest)] shadow-sm transition-colors hover:bg-[var(--color-cream)] md:hidden"
       >
-        <Menu className="size-5" />
+        <Menu className="size-6" />
       </button>
 
       {/* Backdrop + drawer */}
