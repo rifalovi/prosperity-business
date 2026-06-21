@@ -43,12 +43,15 @@ async function main() {
     console.log(`✅ Super admin créé : ${adminEmail} / ChangeMeNow!2026`);
   }
 
-  // ─── 6 services pré-remplis (Sprint 1) ────────────────────────────────
+  // ─── 6 services pré-remplis (contenu réel Prosperity Business) ────────
   const services = [
     {
       slug: "production-vegetale",
       titre: "Production végétale",
-      descriptionCourte: "Cultures vivrières et maraîchères à haut rendement.",
+      descriptionCourte:
+        "Cultures céréalières, tubérisées, maraîchères et légumineuses cultivées sur nos parcelles à Allada.",
+      descriptionLongue:
+        "Notre production végétale couvre quatre familles de cultures adaptées au climat du sud-Bénin :\n\n• Cultures céréalières : maïs\n• Cultures tubérisées : manioc\n• Cultures maraîchères : pastèques, piment, tomate\n• Légumineuses : niébé, pois d'angole\n\nToutes nos cultures sont conduites selon des itinéraires techniques validés, avec semences homologuées et fertilisation raisonnée.",
       domaine: "agriculture" as const,
       sousCategorie: "Production",
       icone: "Sprout",
@@ -56,8 +59,11 @@ async function main() {
     },
     {
       slug: "elevage",
-      titre: "Élevage",
-      descriptionCourte: "Volaille, porc et petits ruminants en élevage durable.",
+      titre: "Production animale",
+      descriptionCourte:
+        "Élevage de volailles locales améliorées (poulets, canards, dindons, pintades) et de petits ruminants.",
+      descriptionLongue:
+        "Notre activité d'élevage est centrée sur la volaille locale améliorée et les petits ruminants :\n\n• Poulets locaux améliorés\n• Canards\n• Dindons\n• Pintades\n• Petits ruminants\n\nNous appliquons des protocoles sanitaires stricts et un suivi alimentaire rigoureux pour garantir une production saine et régulière.",
       domaine: "agriculture" as const,
       sousCategorie: "Élevage",
       icone: "Bird",
@@ -66,7 +72,10 @@ async function main() {
     {
       slug: "transformation",
       titre: "Transformation agroalimentaire",
-      descriptionCourte: "Conversion de produits bruts en produits finis.",
+      descriptionCourte:
+        "Valorisation locale du manioc en gari et tapioca, deux produits phares de la consommation béninoise.",
+      descriptionLongue:
+        "Nous transformons une partie de notre production de manioc en produits finis prêts à la consommation :\n\n• Manioc transformé en gari\n• Manioc transformé en tapioca\n\nCette activité crée de la valeur ajoutée locale et réduit les pertes post-récolte.",
       domaine: "agriculture" as const,
       sousCategorie: "Transformation",
       icone: "Factory",
@@ -74,24 +83,34 @@ async function main() {
     },
     {
       slug: "intrants-equipements",
-      titre: "Intrants & Équipements",
-      descriptionCourte: "Semences, engrais et matériel agricole.",
+      titre: "Intrants & équipements",
+      descriptionCourte:
+        "Distribution d'engrais biologiques, pesticides et semences homologués, et vente d'équipements agricoles.",
+      descriptionLongue:
+        "Nous mettons à disposition des producteurs un catalogue d'intrants et d'équipements de qualité :\n\n• Distribution d'engrais biologiques homologués\n• Distribution de pesticides homologués\n• Distribution de semences homologuées\n• Vente de divers équipements agricoles\n\nTous nos produits sont sélectionnés pour leur conformité réglementaire et leur efficacité au champ.",
       domaine: "agriculture" as const,
+      sousCategorie: "Intrants",
       icone: "Wrench",
       ordreAffichage: 4,
     },
     {
       slug: "formation-entrepreneuriat",
       titre: "Formation à l'entrepreneuriat agricole",
-      descriptionCourte: "Programmes pour jeunes entrepreneurs et femmes.",
+      descriptionCourte:
+        "Programmes de formation pratiques destinés aux porteurs de projet et aux jeunes entrepreneurs agricoles.",
+      descriptionLongue:
+        "Nos modules de formation à l'entrepreneuriat agricole couvrent les fondamentaux nécessaires pour lancer et piloter une unité de production :\n\n• Élaboration du projet et étude de faisabilité\n• Gestion technique et économique d'une unité agricole\n• Itinéraires techniques par filière (cultures, élevage, transformation)\n• Commercialisation et accès aux marchés\n\nFormations dispensées sur notre site d'Allada, en présentiel ou en alternance terrain.",
       domaine: "formation" as const,
       icone: "GraduationCap",
       ordreAffichage: 5,
     },
     {
       slug: "appui-conseil",
-      titre: "Appui-conseil technique",
-      descriptionCourte: "Accompagnement personnalisé sur le terrain.",
+      titre: "Appui-conseil",
+      descriptionCourte:
+        "Installation, conduite technique et suivi-conseil de vos unités agricoles, sur le terrain.",
+      descriptionLongue:
+        "Notre offre d'appui-conseil accompagne les exploitants sur l'ensemble du cycle d'une unité agricole :\n\n• Installation d'unités agricoles (choix du site, dimensionnement, équipement)\n• Conduite technique d'unités agricoles (itinéraires, calendrier, intrants)\n• Suivi appui-conseil des unités agricoles (visites de terrain, diagnostic, ajustements)\n\nNos techniciens interviennent directement chez le producteur, dans la zone d'Allada et au-delà.",
       domaine: "formation" as const,
       icone: "HandHelping",
       ordreAffichage: 6,
@@ -102,7 +121,15 @@ async function main() {
     await prisma.service.upsert({
       where: { slug: s.slug },
       create: s,
-      update: {},
+      update: {
+        titre: s.titre,
+        descriptionCourte: s.descriptionCourte,
+        descriptionLongue: s.descriptionLongue,
+        domaine: s.domaine,
+        sousCategorie: s.sousCategorie,
+        icone: s.icone,
+        ordreAffichage: s.ordreAffichage,
+      },
     });
   }
   console.log(`✅ ${services.length} services seed`);
@@ -113,14 +140,14 @@ async function main() {
   // est_publie=false pour éviter de polluer le site public.
   const sampleVideos = [
     {
-      altText: "Élevage de poulets de chair - vidéo de démonstration",
-      legende: "Notre élevage de poulets en plein air",
+      altText: "Élevage de poulets locaux améliorés - vidéo de démonstration",
+      legende: "Notre élevage de poulets locaux améliorés",
       url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       ordre: 1,
     },
     {
-      altText: "Élevage porcin Prosperity Business",
-      legende: "Visite du parc porcin",
+      altText: "Élevage de pintades Prosperity Business",
+      legende: "Visite de l'unité de pintades",
       url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       ordre: 2,
     },
