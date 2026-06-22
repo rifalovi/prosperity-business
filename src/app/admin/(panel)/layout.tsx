@@ -44,15 +44,23 @@ export default async function AdminPanelLayout({
             </Link>
           </div>
           <div className="ml-auto flex items-center gap-2 sm:gap-4">
-            <span className="hidden text-sm text-muted-foreground sm:inline-flex sm:items-center sm:gap-2">
+            <Link
+              href="/admin/profil"
+              className="hidden text-sm text-muted-foreground transition-colors hover:text-[var(--color-forest)] sm:inline-flex sm:items-center sm:gap-2"
+              title="Mon profil"
+            >
               {nomComplet}
               <span className="rounded bg-[var(--color-cream)] px-1.5 py-0.5 text-xs text-foreground">
                 {role === "super_admin" ? "Super admin" : "Admin"}
               </span>
-            </span>
-            <span className="text-xs text-muted-foreground sm:hidden">
+            </Link>
+            <Link
+              href="/admin/profil"
+              className="text-xs text-muted-foreground transition-colors hover:text-[var(--color-forest)] sm:hidden"
+              title="Mon profil"
+            >
               {role === "super_admin" ? "Super admin" : "Admin"}
-            </span>
+            </Link>
             <LogoutButton />
           </div>
         </header>

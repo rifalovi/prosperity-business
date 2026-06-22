@@ -30,6 +30,10 @@ export default function LoginPage() {
           <LoginForm />
         </div>
 
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          Mot de passe oublié ? Contactez un super administrateur pour le réinitialiser.
+        </p>
+
         <p className="mt-6 text-center text-xs text-muted-foreground">
           <Link href="/" className="hover:text-[var(--color-forest)]">
             ← Retour au site

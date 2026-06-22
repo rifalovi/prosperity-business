@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Lock } from "lucide-react";
 import { Toaster } from "sonner";
 import { getSiteConfig } from "@/lib/site-config";
 import { MobileNav } from "@/components/public/mobile-nav";
@@ -140,9 +141,19 @@ export default async function PublicLayout({ children }: { children: React.React
             </ul>
           </div>
         </div>
-        <p className="mt-8 px-4 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} {config.nomSite}. Tous droits réservés.
-        </p>
+        <div className="mt-8 flex flex-col items-center gap-2 px-4 text-center text-xs text-muted-foreground sm:flex-row sm:justify-between">
+          <p>
+            © {new Date().getFullYear()} {config.nomSite}. Tous droits réservés.
+          </p>
+          <Link
+            href="/admin/login"
+            className="inline-flex items-center gap-1.5 rounded px-2 py-1 text-muted-foreground/70 transition-colors hover:text-[var(--color-forest)]"
+            aria-label="Espace administrateur"
+          >
+            <Lock className="size-3" />
+            Espace admin
+          </Link>
+        </div>
       </footer>
 
       <Toaster position="top-right" richColors closeButton />

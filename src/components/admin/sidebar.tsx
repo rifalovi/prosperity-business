@@ -12,6 +12,8 @@ import {
   Quote,
   Inbox,
   Settings,
+  UserCog,
+  UserCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +26,9 @@ const NAV = [
   { href: "/admin/equipe", label: "Équipe", icon: Users },
   { href: "/admin/temoignages", label: "Témoignages", icon: Quote },
   { href: "/admin/leads", label: "Messages", icon: Inbox },
+  { href: "/admin/utilisateurs", label: "Utilisateurs", icon: UserCog, requiresSuperAdmin: true },
   { href: "/admin/parametres", label: "Paramètres", icon: Settings, requiresSuperAdmin: true },
+  { href: "/admin/profil", label: "Mon profil", icon: UserCircle },
 ];
 
 export function AdminSidebar({ role }: { role: "super_admin" | "admin_contenu" }) {
