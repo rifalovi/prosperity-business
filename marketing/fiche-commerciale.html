@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prosperity Business, fiche de présentation de la plateforme</title>
+<style>
+  :root{
+    --forest:#2d5016; --leaf:#6b9e3a; --earth:#c47a3f; --cream:#f5f0e8;
+    --ink:#1f2417; --muted:#5b6552; --line:#e4ded2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;
+    color:var(--ink); background:var(--cream); line-height:1.6;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px 60px}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:linear-gradient(135deg,var(--forest) 0%,#3c6b1f 55%,var(--leaf) 130%);
+    color:#fff;border-radius:0 0 28px 28px;padding:54px 22px 46px;text-align:center;
+    position:relative;overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;opacity:.16;pointer-events:none;
+    background:radial-gradient(circle at 18% 20%,var(--leaf) 0%,transparent 42%),
+              radial-gradient(circle at 82% 78%,var(--earth) 0%,transparent 42%);
+  }
+  .hero .inner{position:relative;max-width:720px;margin:0 auto}
+  .kicker{
+    display:inline-block;letter-spacing:.18em;text-transform:uppercase;
+    font-size:12px;font-weight:700;color:#dfeccb;margin-bottom:14px;
+  }
+  .hero h1{font-size:42px;line-height:1.1;font-weight:800;margin-bottom:14px}
+  .hero p{font-size:18px;color:#eef4e6;max-width:560px;margin:0 auto}
+  .hero .tag{
+    display:inline-block;margin-top:22px;background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(4px);
+    padding:8px 18px;border-radius:999px;font-size:14px;font-weight:600;
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{margin-top:46px}
+  .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .sec-head .dot{width:12px;height:12px;border-radius:50%;background:var(--leaf);flex:none}
+  .sec-head h2{font-size:26px;font-weight:800;color:var(--forest)}
+  .sec-sub{color:var(--muted);margin:0 0 22px 24px;font-size:15px}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:680px){.grid{grid-template-columns:1fr}}
+
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:16px;
+    padding:20px 22px;box-shadow:0 1px 3px rgba(45,80,22,.05);
+  }
+  .card h3{
+    font-size:17px;font-weight:800;color:var(--forest);
+    display:flex;align-items:center;gap:9px;margin-bottom:12px;
+  }
+  .card h3 .badge{
+    width:26px;height:26px;border-radius:8px;flex:none;
+    background:linear-gradient(135deg,var(--leaf),var(--forest));
+    display:inline-flex;align-items:center;justify-content:center;
+    color:#fff;font-size:13px;font-weight:700;
+  }
+  ul.feat{list-style:none}
+  ul.feat li{position:relative;padding:5px 0 5px 26px;font-size:14.5px;color:#33402a}
+  ul.feat li::before{
+    content:"";position:absolute;left:0;top:11px;width:13px;height:13px;
+    border-radius:50%;background:var(--leaf);
+    box-shadow:inset 0 0 0 2px #fff, 0 0 0 1px var(--leaf);
+  }
+  ul.feat li b{color:var(--ink)}
+
+  /* ---------- BIENTÔT ---------- */
+  .soon{
+    background:#fff;border:2px dashed var(--earth);border-radius:18px;padding:24px 24px 10px;
+  }
+  .soon .grid{margin-top:4px}
+  .soon-item{padding:6px 0 18px}
+  .soon-item .t{
+    font-weight:700;color:var(--ink);display:flex;align-items:center;gap:10px;font-size:15px;
+  }
+  .pill{
+    background:#fbeede;color:var(--earth);border:1px solid #eccfae;
+    font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;
+    text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;
+  }
+  .soon-item p{color:var(--muted);font-size:13.5px;margin:4px 0 0 0}
+
+  /* ---------- PROMOTEUR ---------- */
+  .promo{
+    background:linear-gradient(135deg,#fff 0%,var(--cream) 100%);
+    border:1px solid var(--line);border-radius:20px;overflow:hidden;
+    display:grid;grid-template-columns:240px 1fr;
+  }
+  @media(max-width:680px){.promo{grid-template-columns:1fr}}
+  .promo .photo{
+    background:linear-gradient(160deg,var(--forest),var(--leaf));
+    min-height:300px;display:flex;align-items:flex-end;justify-content:center;position:relative;
+  }
+  .promo .photo img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:2}
+  .promo .photo .ph{
+    color:#fff;text-align:center;padding:24px;position:relative;z-index:1;opacity:.92;font-size:13px;
+  }
+  .promo .photo .ph svg{width:54px;height:54px;margin-bottom:10px;opacity:.85}
+  .promo .body{padding:28px 30px}
+  .promo .role{
+    display:inline-block;background:var(--leaf);color:#fff;font-size:12px;font-weight:700;
+    padding:4px 12px;border-radius:999px;letter-spacing:.04em;margin-bottom:12px;
+  }
+  .promo h3{font-size:24px;color:var(--forest);font-weight:800;margin-bottom:4px}
+  .promo .sub{color:var(--earth);font-weight:600;font-size:14px;margin-bottom:14px}
+  .promo p{color:#3a4431;font-size:15px;margin-bottom:12px}
+  .promo .edit{
+    font-size:12.5px;color:var(--muted);background:#fff;border:1px dashed var(--line);
+    border-radius:10px;padding:10px 12px;margin-top:8px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  .foot{
+    margin-top:50px;background:var(--forest);color:#fff;border-radius:20px;
+    padding:28px 30px;display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:center;
+  }
+  .foot .brand{font-size:20px;font-weight:800}
+  .foot .brand span{color:#cfe3b3;font-weight:500;font-size:14px;display:block;margin-top:2px}
+  .foot a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.4)}
+  .foot .ct{font-size:14px;line-height:1.9;text-align:right}
+  @media(max-width:680px){.foot .ct{text-align:left}}
+
+  @media print{
+    body{background:#fff}
+    .hero{border-radius:0}
+    .sec-head{break-after:avoid}
+    .card,.soon-item,.promo,.foot{break-inside:avoid}
+    section{margin-top:30px}
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="inner">
+      <span class="kicker">Plateforme digitale</span>
+      <h1>Prosperity Business</h1>
+      <p>Le site vitrine, le système de gestion de contenu et l'espace communautaire d'une ferme agro-entrepreneuriale moderne à Allada, Bénin.</p>
+      <span class="tag">Nourrir &middot; Former &middot; Prospérer</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <!-- ================= VITRINE ================= -->
+    <section>
+      <div class="sec-head"><span class="dot"></span><h2>Le site vitrine public</h2></div>
+      <p class="sec-sub">Une vitrine vivante, optimisée pour le référencement et accessible sur tous les écrans.</p>
+      <div class="grid">
+        <div class="card">
+          <h3><span class="badge">1</span>Pages institutionnelles</h3>
+          <ul class="feat">
+            <li><b>Accueil dynamique</b> : diaporama, mission, chiffres clés, services, vidéos, actualités</li>
+            <li><b>À propos</b> : présentation de la ferme et de sa vision</li>
+            <li><b>Contact</b> : formulaire de prise de contact en ligne</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><span class="badge">2</span>Catalogue &amp; médias</h3>
+          <ul class="feat">
+            <li><b>Services</b> : liste et fiches détaillées</li>
+            <li><b>Formations</b> : liste et fiches détaillées</li>
+            <li><b>Galerie vidéo</b> : lecteur intégré façon « reels »</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><span class="badge">3</span>Actualités &amp; blog</h3>
+          <ul class="feat">
+            <li><b>Articles</b> publiés par l'équipe, avec pagination</li>
+            <li>Optimisation SEO avancée (données structurées)</li>
+            <li>Partage facilité sur les réseaux sociaux</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><span class="badge">4</span>Communauté &amp; partenaires</h3>
+          <ul class="feat">
+            <li><b>Annuaire des partenaires</b> avec fiches publiques</li>
+            <li><b>Communauté des membres</b> mise en valeur</li>
+            <li><b>Devenir partenaire</b> : candidature en ligne</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ADMIN ================= -->
+    <section>
+      <div class="sec-head"><span class="dot"></span><h2>L'espace d'administration</h2></div>
+      <p class="sec-sub">Un tableau de bord complet pour piloter tout le contenu, sans aucune compétence technique.</p>
+      <div class="grid">
+        <div class="card">
+          <h3><span class="badge">5</span>Gestion de contenu</h3>
+          <ul class="feat">
+            <li><b>Articles</b> avec éditeur de texte enrichi</li>
+            <li><b>Services, Formations, Équipe, Témoignages</b></li>
+            <li><b>Galerie</b> : envoi d'images et de vidéos</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><span class="badge">6</span>Relation &amp; modération</h3>
+          <ul class="feat">
+            <li><b>Boîte de réception</b> des messages de contact</li>
+            <li><b>Candidatures</b> partenaires à valider</li>
+            <li><b>Profils publics</b> : modération avant mise en ligne</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><span class="badge">7</span>Comptes &amp; sécurité</h3>
+          <ul class="feat">
+            <li><b>4 rôles</b> : super admin, admin contenu, membre, partenaire</li>
+            <li>Création de comptes &amp; envoi des identifiants par email</li>
+            <li>Mot de passe à changer à la première connexion</li>
+            <li>Mot de passe oublié / réinitialisation sécurisée</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><span class="badge">8</span>Paramètres &amp; emails</h3>
+          <ul class="feat">
+            <li><b>Paramètres du site</b> : coordonnées, réseaux, logo</li>
+            <li><b>Emails automatiques</b> : identifiants, candidatures, notifications</li>
+            <li>Espaces dédiés <b>Membres</b> et <b>Partenaires</b></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= QUALITÉ ================= -->
+    <section>
+      <div class="sec-head"><span class="dot"></span><h2>Qualité &amp; performance</h2></div>
+      <div class="grid">
+        <div class="card">
+          <h3><span class="badge">9</span>Technique</h3>
+          <ul class="feat">
+            <li><b>100% responsive</b> : mobile, tablette, ordinateur</li>
+            <li>Chargement rapide &amp; hébergement haute disponibilité</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><span class="badge">10</span>Visibilité</h3>
+          <ul class="feat">
+            <li><b>Référencement Google</b> optimisé</li>
+            <li><b>Nom de domaine personnalisé</b> &amp; connexion sécurisée (HTTPS)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= BIENTÔT ================= -->
+    <section>
+      <div class="sec-head"><span class="dot" style="background:var(--earth)"></span><h2>Bientôt disponible</h2></div>
+      <p class="sec-sub">La plateforme évolue : voici les modules déjà planifiés.</p>
+      <div class="soon">
+        <div class="grid">
+          <div class="soon-item">
+            <div class="t">Messagerie intégrée <span class="pill">à venir</span></div>
+            <p>Échanges directs entre les membres / partenaires et l'administration.</p>
+          </div>
+          <div class="soon-item">
+            <div class="t">Formations en ligne <span class="pill">à venir</span></div>
+            <p>Modules de formation accessibles depuis l'espace membre.</p>
+          </div>
+          <div class="soon-item">
+            <div class="t">Bibliothèque de ressources <span class="pill">à venir</span></div>
+            <p>Documents et vidéos partagés avec la communauté.</p>
+          </div>
+          <div class="soon-item">
+            <div class="t">Espace documents partenaires <span class="pill">à venir</span></div>
+            <p>Conventions, factures et supports centralisés.</p>
+          </div>
+          <div class="soon-item">
+            <div class="t">Demande d'accès en self-service <span class="pill">à venir</span></div>
+            <p>Un visiteur ou un membre peut demander son accès, l'admin valide.</p>
+          </div>
+          <div class="soon-item">
+            <div class="t">Édition du contenu du site <span class="pill">en cours</span></div>
+            <p>Mission, chiffres clés et textes éditables directement par l'administrateur.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PROMOTEUR ================= -->
+    <section>
+      <div class="sec-head"><span class="dot"></span><h2>Le mot du promoteur</h2></div>
+      <div class="promo">
+        <div class="photo">
+          <img src="../public/promoteur.jpg" alt="Photo de Thierry Langbenon"
+               onerror="this.style.display='none'" />
+          <div class="ph">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+            </svg>
+            Déposez la photo ici&nbsp;:<br /><code>marketing/promoteur.jpg</code>
+          </div>
+        </div>
+        <div class="body">
+          <span class="role">Fondateur &amp; Promoteur</span>
+          <h3>Thierry Langbenon</h3>
+          <div class="sub">Prosperity Business, Allada, Bénin</div>
+          <p>« Mon ambition est simple : prouver qu'une agriculture moderne, encadrée et inclusive peut transformer durablement nos communautés. À Prosperity Business, nous formons, nous produisons et nous accompagnons celles et ceux qui veulent vivre dignement de la terre. »</p>
+          <p>Porté par cette vision, Thierry Langbenon a fondé Prosperity Business pour autonomiser les producteurs, renforcer la sécurité alimentaire locale et faire émerger une nouvelle génération d'entrepreneurs agricoles béninois.</p>
+          <div class="edit">Texte modifiable à votre convenance.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <div class="foot">
+      <div class="brand">Prosperity Business<span>Nourrir &middot; Former &middot; Prospérer</span></div>
+      <div class="ct">
+        <a href="https://prosperity-business.com">prosperity-business.com</a><br />
+        contact@prosperity-business.com<br />
+        Allada, Bénin
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -34,7 +34,7 @@ const VALEURS = [
   {
     icon: Lightbulb,
     titre: "Innovation",
-    texte: "Adopter les techniques modernes - élevage hors-sol, aquaculture, transformation - pour répondre aux défis agricoles du Bénin.",
+    texte: "Adopter les techniques modernes (élevage hors-sol, aquaculture, transformation) pour répondre aux défis agricoles du Bénin.",
   },
   {
     icon: Leaf,
@@ -49,7 +49,7 @@ const VALEURS = [
   {
     icon: Award,
     titre: "Excellence",
-    texte: "Viser la qualité - du poussin au produit fini - et transmettre ces standards à chaque bénéficiaire formé.",
+    texte: "Viser la qualité, du poussin au produit fini, et transmettre ces standards à chaque bénéficiaire formé.",
   },
 ];
 
@@ -60,7 +60,7 @@ const JALONS = [
   { annee: "2021", titre: "Premières formations", texte: "Lancement des sessions pratiques pour jeunes ruraux et femmes entrepreneures du département de l'Atlantique." },
   { annee: "2022", titre: "Cap des 100 bénéficiaires", texte: "Plus de 100 personnes formées et accompagnées dans le lancement de leur propre activité agricole." },
   { annee: "2023", titre: "Aquaculture", texte: "Aménagement des bassins de pisciculture et démarrage de l'élevage de tilapia et silure." },
-  { annee: "2024", titre: "Élevage cunicole", texte: "Ouverture du clapier moderne - diversification vers la viande blanche à haute valeur ajoutée." },
+  { annee: "2024", titre: "Élevage cunicole", texte: "Ouverture du clapier moderne, diversification vers la viande blanche à haute valeur ajoutée." },
   { annee: "2025", titre: "Plateforme numérique", texte: "Mise en ligne du site vitrine et du catalogue de formations pour toucher tout le Bénin." },
   { annee: "2026", titre: "Cap des 200+ bénéficiaires", texte: "Élargissement de l'appui-conseil et structuration des filières partenaires en Afrique de l'Ouest." },
 ];
@@ -69,7 +69,7 @@ const ESPECES = [
   {
     emoji: "🐔",
     nom: "Poulets de chair",
-    texte: "Élevage en cycles courts, bâtiments ventilés et alimentation maîtrisée - pour une viande de qualité disponible toute l'année.",
+    texte: "Élevage en cycles courts, bâtiments ventilés et alimentation maîtrisée, pour une viande de qualité disponible toute l'année.",
   },
   {
     emoji: "🦆",
@@ -84,7 +84,7 @@ const ESPECES = [
   {
     emoji: "🐰",
     nom: "Lapins",
-    texte: "Clapier moderne - viande blanche à forte valeur nutritionnelle et cycle de reproduction rapide.",
+    texte: "Clapier moderne, viande blanche à forte valeur nutritionnelle et cycle de reproduction rapide.",
   },
   {
     emoji: "🐟",
@@ -140,6 +140,54 @@ export default async function AProposPage() {
             <strong className="text-foreground">formations professionnelles pratiques</strong> et {" "}
             <strong className="text-foreground">appui-conseil terrain</strong>. Notre ambition : faire émerger une génération d&apos;entrepreneurs agricoles autonomes, capables de nourrir leur communauté tout en vivant dignement de leur métier.
           </p>
+        </div>
+      </section>
+
+      {/* Le mot du promoteur */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--color-forest)] via-[var(--color-forest)] to-[var(--color-leaf)]/85 py-16 text-white sm:py-20">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-15"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 15% 20%, var(--color-leaf) 0%, transparent 45%), radial-gradient(circle at 85% 85%, var(--color-earth) 0%, transparent 45%)",
+          }}
+        />
+        <div className="relative mx-auto grid max-w-5xl items-center gap-10 px-4 sm:grid-cols-[minmax(0,330px)_1fr]">
+          <div className="relative mx-auto w-full max-w-[330px]">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20">
+              <Image
+                src="/promoteur.jpg"
+                alt="Thierry Langbenon, fondateur de la ferme"
+                fill
+                className="object-cover"
+                sizes="330px"
+                priority
+              />
+              {/* Fondu : la photo se fond dans le vert du fond */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--color-forest)] via-[var(--color-forest)]/20 to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[var(--color-leaf)]/35" />
+            </div>
+          </div>
+
+          <div>
+            <p className="mb-4 inline-block rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest backdrop-blur">
+              Le mot du promoteur
+            </p>
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
+              Thierry Langbenon
+            </h2>
+            <p className="mt-1 text-[var(--color-cream)]/80">
+              Fondateur &amp; Promoteur
+            </p>
+            <blockquote className="mt-6 text-lg italic leading-relaxed text-white/90">
+              {"« Mon ambition est simple : prouver qu'une agriculture moderne, encadrée et inclusive peut transformer durablement nos communautés. Nous formons, nous produisons et nous accompagnons celles et ceux qui veulent vivre dignement de la terre. »"}
+            </blockquote>
+            <p className="mt-5 leading-relaxed text-white/75">
+              {"Porté par cette vision, il a fondé "}
+              {config.nomSite}
+              {" pour autonomiser les producteurs, renforcer la sécurité alimentaire locale et faire émerger une nouvelle génération d'entrepreneurs agricoles béninois."}
+            </p>
+          </div>
         </div>
       </section>
 

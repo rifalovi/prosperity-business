@@ -44,7 +44,7 @@ export default function DevenirPartenairePage() {
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
             Construisons ensemble un écosystème agricole solide au Bénin.
-            Soumettez votre candidature en quelques minutes — notre équipe vous répond
+            Soumettez votre candidature en quelques minutes. Notre équipe vous répond
             sous 5 jours ouvrables.
           </p>
         </div>

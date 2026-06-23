@@ -46,7 +46,7 @@ export default async function PartenaireDashboard() {
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Bienvenue dans le réseau Prosperity Business. Votre espace partenaire
-              est en cours de mise en place — les modules profil public, documents et
+              est en cours de mise en place. Les modules profil public, documents et
               messagerie arrivent prochainement.
             </p>
           </div>
