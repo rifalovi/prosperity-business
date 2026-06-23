@@ -77,9 +77,7 @@ export function VideoCard({
           loading="lazy"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-[var(--color-forest)] text-sm text-white">
-          {video.altText}
-        </div>
+        <div className="h-full w-full bg-gradient-to-br from-[var(--color-forest)] to-[var(--color-leaf)] transition-transform duration-500 ease-out group-hover:scale-115" />
       )}
       <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/10 to-transparent p-3">
         <div className="w-full">

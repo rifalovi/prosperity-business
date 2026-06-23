@@ -224,7 +224,7 @@ export default async function HomePage() {
               <h2 className="font-display text-3xl font-bold">La ferme en vidéo</h2>
               <p className="mt-2 text-muted-foreground">Plongez dans le quotidien de {config.nomSite}.</p>
             </header>
-            <div className="mx-auto grid max-w-2xl gap-4 sm:grid-cols-2">
+            <div className="mx-auto max-w-3xl">
               <VideoGallery videos={featuredVideos as GalleryVideo[]} columns={2} />
             </div>
             <div className="mt-8 text-center">
