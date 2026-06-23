@@ -5,6 +5,10 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { generateSlug } from "@/lib/slug";
+import {
+  sendProfilPublicPublieEmail,
+  sendProfilPublicRefuseEmail,
+} from "@/lib/email";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -262,6 +266,7 @@ export async function approvePublicProfileAction(
     where: { id: userId },
     select: {
       id: true,
+      email: true,
       role: true,
       nomComplet: true,
       bio: true,
@@ -294,6 +299,18 @@ export async function approvePublicProfileAction(
       slugPublic: slug,
     },
   });
+
+  try {
+    await sendProfilPublicPublieEmail({
+      email: user.email,
+      nomComplet: user.nomComplet,
+      role: user.role as "membre" | "partenaire",
+      slug,
+    });
+  } catch (e) {
+    console.error("[profile] email de publication non envoyé", e);
+  }
+
   revalidate();
   return { ok: true };
 }
@@ -314,7 +331,12 @@ export async function rejectPublicProfileAction(
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { statutProfilPublic: true },
+    select: {
+      email: true,
+      nomComplet: true,
+      role: true,
+      statutProfilPublic: true,
+    },
   });
   if (!user) return { ok: false, error: "Utilisateur introuvable" };
   if (user.statutProfilPublic !== "en_attente") {
@@ -329,6 +351,18 @@ export async function rejectPublicProfileAction(
       profilPublicNotesAdmin: parsed.data.notesAdmin,
     },
   });
+
+  try {
+    await sendProfilPublicRefuseEmail({
+      email: user.email,
+      nomComplet: user.nomComplet,
+      role: user.role as "membre" | "partenaire",
+      motif: parsed.data.notesAdmin,
+    });
+  } catch (e) {
+    console.error("[profile] email de refus non envoyé", e);
+  }
+
   revalidate();
   return { ok: true };
 }

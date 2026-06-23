@@ -276,3 +276,83 @@ export async function sendCandidatureRejeteeEmail(args: {
     { silent: true },
   );
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// Modération du profil public (membres & partenaires)
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Envoyé quand un admin publie le profil public d'un membre/partenaire.
+ */
+export async function sendProfilPublicPublieEmail(args: {
+  email: string;
+  nomComplet: string;
+  role: "membre" | "partenaire";
+  slug: string;
+}) {
+  const publicUrl = `${getSiteUrl()}/${
+    args.role === "partenaire" ? "partenaires" : "membres"
+  }/${args.slug}`;
+  const body = `
+    <p>Bonjour <strong>${args.nomComplet}</strong>,</p>
+    <p>Bonne nouvelle : votre profil public a été validé et est désormais
+    visible sur le site Prosperity Business.</p>
+    <p style="text-align: center; margin: 28px 0;">
+      <a href="${publicUrl}" style="display: inline-block; background: #2D5016; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">
+        Voir mon profil en ligne
+      </a>
+    </p>
+    <p style="font-size: 13px; color: #6b6b6b;">
+      Lien direct : <a href="${publicUrl}" style="color: #2D5016; word-break: break-all;">${publicUrl}</a>
+    </p>
+    <p style="font-size: 13px; color: #6b6b6b;">
+      Vous pouvez modifier votre profil à tout moment depuis votre espace.
+      Toute modification d'un profil publié le repasse en validation avant
+      d'être à nouveau visible.
+    </p>
+  `;
+  return safeSend(
+    args.email,
+    "Votre profil public est en ligne 🎉",
+    emailLayout("Profil publié", body),
+    { silent: true },
+  );
+}
+
+/**
+ * Envoyé quand un admin refuse la publication d'un profil public.
+ * Le motif (notes_admin) est affiché à l'utilisateur.
+ */
+export async function sendProfilPublicRefuseEmail(args: {
+  email: string;
+  nomComplet: string;
+  role: "membre" | "partenaire";
+  motif: string;
+}) {
+  const editUrl = `${getSiteUrl()}/${
+    args.role === "partenaire" ? "partenaire" : "espace"
+  }/profil`;
+  const body = `
+    <p>Bonjour <strong>${args.nomComplet}</strong>,</p>
+    <p>Votre demande de publication de profil public n'a pas pu être validée
+    en l'état.</p>
+    <div style="background: #f6f6f4; border-left: 3px solid #2D5016; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+      <p style="margin: 0; font-size: 14px;"><strong>Motif :</strong><br>${args.motif.replace(/\n/g, "<br>")}</p>
+    </div>
+    <p style="text-align: center; margin: 28px 0;">
+      <a href="${editUrl}" style="display: inline-block; background: #2D5016; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">
+        Modifier mon profil
+      </a>
+    </p>
+    <p style="font-size: 13px; color: #6b6b6b;">
+      Une fois les ajustements faits, soumettez à nouveau votre profil :
+      nous le réexaminerons rapidement.
+    </p>
+  `;
+  return safeSend(
+    args.email,
+    "Votre profil public nécessite des ajustements",
+    emailLayout("Profil à ajuster", body),
+    { silent: true },
+  );
+}
