@@ -19,8 +19,23 @@ const createSchema = z.object({
   email: z.string().email("Email invalide").max(120),
   nomComplet: z.string().min(2, "Min 2 caractères").max(100),
   role: z.enum(ROLES),
-  password: z.string().min(12, "Au moins 12 caractères").max(72),
+  password: z
+    .string()
+    .min(12, "Au moins 12 caractères")
+    .max(72)
+    .optional()
+    .or(z.literal("")),
 });
+
+/** Génère un mot de passe aléatoire lisible côté client (bouton "Générer"). */
+function genPassword(length = 14): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%&*";
+  const arr = new Uint32Array(length);
+  crypto.getRandomValues(arr);
+  let out = "";
+  for (let i = 0; i < length; i++) out += chars[arr[i] % chars.length];
+  return out;
+}
 
 const inviteSchema = z.object({
   email: z.string().email("Email invalide").max(120),
@@ -71,7 +86,12 @@ export function UserModal({
     email: string;
     link: string;
   } | null>(null);
+  const [credentialsResult, setCredentialsResult] = useState<{
+    email: string;
+    password: string;
+  } | null>(null);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [credsCopied, setCredsCopied] = useState(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -133,8 +153,8 @@ export function UserModal({
     start(async () => {
       const r = await createUserAction(values);
       if (r.ok) {
-        toast.success("Utilisateur créé");
-        onClose();
+        toast.success("Utilisateur créé — identifiants envoyés par email");
+        setCredentialsResult({ email: r.email, password: r.password });
         return;
       }
       if (r.fieldErrors) {
@@ -169,6 +189,66 @@ export function UserModal({
     setLinkCopied(true);
     setTimeout(() => setLinkCopied(false), 2000);
   };
+
+  const copyCreds = async () => {
+    if (!credentialsResult) return;
+    await navigator.clipboard.writeText(
+      `Email : ${credentialsResult.email}\nMot de passe : ${credentialsResult.password}`,
+    );
+    setCredsCopied(true);
+    setTimeout(() => setCredsCopied(false), 2000);
+  };
+
+  // Écran post-création : montre les identifiants à transmettre
+  if (credentialsResult) {
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+        onClick={(e) => e.target === e.currentTarget && onClose()}
+      >
+        <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+          <h2 className="font-display text-lg font-bold">Compte créé</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Les identifiants ont été envoyés par email à{" "}
+            <strong>{credentialsResult.email}</strong>. Vous pouvez aussi les
+            transmettre directement. L&apos;utilisateur devra changer son mot de
+            passe à la première connexion.
+          </p>
+          <div className="mt-4 space-y-2 rounded-lg border border-border bg-[var(--color-cream)] px-3 py-3 font-mono text-xs">
+            <div className="break-all">
+              <span className="text-muted-foreground">Email : </span>
+              <span className="select-all">{credentialsResult.email}</span>
+            </div>
+            <div className="break-all">
+              <span className="text-muted-foreground">Mot de passe : </span>
+              <span className="select-all font-semibold">{credentialsResult.password}</span>
+            </div>
+          </div>
+          <div className="mt-4 flex gap-3">
+            <button
+              type="button"
+              onClick={copyCreds}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-4 py-2 text-sm hover:bg-[var(--color-cream)]"
+            >
+              {credsCopied ? (
+                <Check className="size-4 text-green-600" />
+              ) : (
+                <Copy className="size-4" />
+              )}
+              Copier
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 rounded-lg bg-[var(--color-forest)] px-5 py-2 text-sm font-medium text-white hover:bg-[var(--color-forest)]/90"
+            >
+              Terminer
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Écran post-invitation : montre le lien à transmettre manuellement
   if (invitationResult) {
@@ -421,11 +501,26 @@ export function UserModal({
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium">Mot de passe initial *</label>
+                  <div className="mb-1 flex items-center justify-between">
+                    <label className="block text-sm font-medium">Mot de passe initial</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        createForm.setValue("password", genPassword(), {
+                          shouldValidate: true,
+                        });
+                        setShowPassword(true);
+                      }}
+                      className="text-xs font-medium text-[var(--color-leaf)] hover:underline"
+                    >
+                      Générer
+                    </button>
+                  </div>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
                       autoComplete="new-password"
+                      placeholder="Laisser vide pour générer automatiquement"
                       className={`${inputBase} pr-10`}
                       {...createForm.register("password")}
                     />
@@ -443,10 +538,13 @@ export function UserModal({
                       {createForm.formState.errors.password.message}
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Au moins 12 caractères. L&apos;utilisateur pourra le changer dans son profil.
-                  </p>
                 </div>
+
+                <p className="rounded-md border border-[var(--color-leaf)]/30 bg-[var(--color-leaf)]/5 p-3 text-xs text-foreground">
+                  L&apos;utilisateur recevra ses identifiants (email + mot de passe)
+                  par email et devra définir son propre mot de passe à la première
+                  connexion. Laissez le champ vide pour générer un mot de passe.
+                </p>
 
                 <div className="flex gap-3 border-t border-border pt-4">
                   <button
@@ -455,7 +553,7 @@ export function UserModal({
                     className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-forest)] px-5 py-2 text-sm font-medium text-white hover:bg-[var(--color-forest)]/90 disabled:opacity-60"
                   >
                     {pending && <Loader2 className="size-4 animate-spin" />}
-                    Créer
+                    Créer et envoyer
                   </button>
                   <button
                     type="button"

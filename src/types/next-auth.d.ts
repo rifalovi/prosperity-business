@@ -8,6 +8,7 @@ declare module "next-auth" {
       id: string;
       role: RoleUser;
       nomComplet: string;
+      doitChangerMotDePasse: boolean;
     } & DefaultSession["user"];
   }
 
@@ -15,6 +16,7 @@ declare module "next-auth" {
     id?: string;
     role: RoleUser;
     nomComplet: string;
+    doitChangerMotDePasse: boolean;
   }
 }
 
@@ -23,5 +25,6 @@ declare module "next-auth/jwt" {
     userId: string;
     role: RoleUser;
     nomComplet: string;
+    doitChangerMotDePasse: boolean;
   }
 }

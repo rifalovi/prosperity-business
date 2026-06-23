@@ -139,6 +139,47 @@ export async function sendInvitationEmail(args: {
 }
 
 /**
+ * Envoyé quand un admin crée un compte avec un mot de passe initial.
+ * Contient les identifiants de connexion. L'utilisateur devra changer
+ * son mot de passe à la première connexion.
+ */
+export async function sendCredentialsEmail(args: {
+  email: string;
+  nomComplet: string;
+  password: string;
+  role: "membre" | "partenaire" | "super_admin" | "admin_contenu";
+}) {
+  const isAdmin = args.role === "super_admin" || args.role === "admin_contenu";
+  const loginUrl = `${getSiteUrl()}${isAdmin ? "/admin/login" : "/connexion"}`;
+  const body = `
+    <p>Bonjour <strong>${args.nomComplet}</strong>,</p>
+    <p>Un compte vient d'être créé pour vous sur la plateforme Prosperity Business.
+    Voici vos identifiants de connexion :</p>
+    <div style="background: #f6f6f4; border: 1px solid #e5e5e5; padding: 16px; margin: 16px 0; border-radius: 8px; font-size: 14px;">
+      <p style="margin: 0 0 8px;"><strong>Email :</strong> ${args.email}</p>
+      <p style="margin: 0;"><strong>Mot de passe provisoire :</strong>
+        <code style="background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #e5e5e5;">${args.password}</code>
+      </p>
+    </div>
+    <p style="text-align: center; margin: 28px 0;">
+      <a href="${loginUrl}" style="display: inline-block; background: #2D5016; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">
+        Se connecter
+      </a>
+    </p>
+    <p style="font-size: 13px; color: #6b6b6b;">
+      Pour votre sécurité, vous devrez <strong>définir votre propre mot de passe</strong>
+      dès votre première connexion.
+    </p>
+  `;
+  return safeSend(
+    args.email,
+    "Vos identifiants Prosperity Business",
+    emailLayout("Votre accès à la plateforme", body),
+    { silent: true },
+  );
+}
+
+/**
  * Envoyé quand un utilisateur demande "mot de passe oublié".
  */
 export async function sendPasswordResetEmail(args: {

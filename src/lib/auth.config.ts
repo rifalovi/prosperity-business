@@ -59,6 +59,14 @@ export const authConfig = {
 
       const role = auth?.user?.role as RoleUser | undefined;
       const isAuthed = !!role;
+      const mustChangePassword = !!auth?.user?.doitChangerMotDePasse;
+
+      // ── Mot de passe initial à changer : on bloque tout accès aux espaces
+      // privés tant que l'utilisateur n'a pas défini son propre mot de passe.
+      // (la page /changer-mot-de-passe n'est pas couverte par le matcher)
+      if (isAuthed && mustChangePassword) {
+        return Response.redirect(new URL("/changer-mot-de-passe", request.nextUrl));
+      }
 
       // ── Pages de login : si déjà connecté, rediriger vers le bon dashboard
       if (isAdminLogin || isConnexion) {
@@ -94,6 +102,7 @@ export const authConfig = {
         token.userId = user.id;
         token.role = user.role;
         token.nomComplet = user.nomComplet;
+        token.doitChangerMotDePasse = user.doitChangerMotDePasse;
       }
       return token;
     },
@@ -102,6 +111,7 @@ export const authConfig = {
         session.user.id = token.userId as string;
         session.user.role = token.role as RoleUser;
         session.user.nomComplet = token.nomComplet as string;
+        session.user.doitChangerMotDePasse = token.doitChangerMotDePasse as boolean;
       }
       return session;
     },

@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { sendInvitationEmail } from "@/lib/email";
+import { sendInvitationEmail, sendCredentialsEmail } from "@/lib/email";
 import { generateToken, tokenExpiry } from "@/lib/tokens";
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -57,7 +57,9 @@ const revalidate = () => {
 
 const ROLES = ["super_admin", "admin_contenu", "membre", "partenaire"] as const;
 
-// Création directe (avec mot de passe) — réservé aux comptes admin créés par un super_admin.
+// Création directe : l'admin fixe (ou laisse générer) un mot de passe initial.
+// Les identifiants sont envoyés par email ; l'utilisateur devra le changer
+// à la première connexion.
 const createUserSchema = z.object({
   email: z.string().email("Email invalide").max(120),
   nomComplet: z.string().min(2, "Min 2 caractères").max(100),
@@ -65,7 +67,9 @@ const createUserSchema = z.object({
   password: z
     .string()
     .min(12, "Au moins 12 caractères")
-    .max(72, "Trop long (max 72)"),
+    .max(72, "Trop long (max 72)")
+    .optional()
+    .or(z.literal("")),
 });
 
 // Création par invitation (sans mot de passe) — flux recommandé pour membres/partenaires.
@@ -99,17 +103,34 @@ const updateMyProfileSchema = z.object({
   nomComplet: z.string().min(2, "Min 2 caractères").max(100),
 });
 
+const forcePasswordSchema = z
+  .object({
+    newPassword: z.string().min(12, "Au moins 12 caractères").max(72),
+    confirmPassword: z.string(),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: "Les mots de passe ne correspondent pas",
+    path: ["confirmPassword"],
+  });
+
 // ────────────────────────────────────────────────────────────────────────────
 // Super admin: gestion des utilisateurs
 // ────────────────────────────────────────────────────────────────────────────
 
-export async function createUserAction(raw: unknown): Promise<ActionResult<{ id: string }>> {
+export async function createUserAction(
+  raw: unknown,
+): Promise<
+  | { ok: true; id: string; email: string; password: string }
+  | { ok: false; error: string; fieldErrors?: Record<string, string> }
+> {
   await requireSuperAdmin();
   const parsed = createUserSchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: "Données invalides", fieldErrors: fieldErrors(parsed.error) };
 
-  const { email, nomComplet, role, password } = parsed.data;
+  const { email, nomComplet, role } = parsed.data;
   const normalizedEmail = email.toLowerCase();
+  // Mot de passe fourni par l'admin, ou généré automatiquement si laissé vide.
+  const password = parsed.data.password ? parsed.data.password : randomPassword(14);
 
   const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
   if (existing) {
@@ -122,10 +143,21 @@ export async function createUserAction(raw: unknown): Promise<ActionResult<{ id:
 
   const passwordHash = await bcrypt.hash(password, 12);
   const user = await prisma.user.create({
-    data: { email: normalizedEmail, nomComplet, role, passwordHash, estActif: true },
+    data: {
+      email: normalizedEmail,
+      nomComplet,
+      role,
+      passwordHash,
+      estActif: true,
+      doitChangerMotDePasse: true,
+    },
   });
+
+  // Email best-effort avec les identifiants (silencieux si Resend non config).
+  await sendCredentialsEmail({ email: normalizedEmail, nomComplet, password, role });
+
   revalidate();
-  return { ok: true, id: user.id };
+  return { ok: true, id: user.id, email: normalizedEmail, password };
 }
 
 /**
@@ -272,6 +304,27 @@ export async function updateMyProfileAction(raw: unknown): Promise<ActionResult>
     data: { nomComplet: parsed.data.nomComplet },
   });
   revalidate();
+  return { ok: true };
+}
+
+/**
+ * Changement de mot de passe forcé à la première connexion (compte créé par
+ * un admin). L'utilisateur est déjà authentifié — on ne redemande pas l'ancien
+ * mot de passe. Après succès, le client doit se déconnecter pour rafraîchir le
+ * jeton (le flag doitChangerMotDePasse y est encore à true).
+ */
+export async function forcePasswordChangeAction(raw: unknown): Promise<ActionResult> {
+  const me = await requireSession();
+  const parsed = forcePasswordSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { ok: false, error: "Données invalides", fieldErrors: fieldErrors(parsed.error) };
+  }
+
+  const newHash = await bcrypt.hash(parsed.data.newPassword, 12);
+  await prisma.user.update({
+    where: { id: me.id },
+    data: { passwordHash: newHash, doitChangerMotDePasse: false },
+  });
   return { ok: true };
 }
 

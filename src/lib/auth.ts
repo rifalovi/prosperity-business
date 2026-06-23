@@ -106,6 +106,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           nomComplet: user.nomComplet,
           role: user.role,
+          doitChangerMotDePasse: user.doitChangerMotDePasse,
         };
       },
     }),

@@ -250,6 +250,8 @@ model User {
   passwordHash      String?   @map("password_hash")
   role              RoleUser  @default(admin_contenu)
   estActif          Boolean   @default(true) @map("est_actif")
+  // Forcer le changement du mot de passe initial (compte créé par un admin)
+  doitChangerMotDePasse Boolean @default(false) @map("doit_changer_mot_de_passe")
   derniereConnexion DateTime? @map("derniere_connexion") @db.Timestamptz
   // Téléphone optionnel (utile pour membres/partenaires, contact, KkiaPay)
   telephone         String?
