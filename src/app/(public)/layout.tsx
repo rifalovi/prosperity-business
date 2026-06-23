@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { Lock } from "lucide-react";
+import { Lock, LogIn, UserCircle } from "lucide-react";
 import { Toaster } from "sonner";
 import { getSiteConfig } from "@/lib/site-config";
+import { auth } from "@/lib/auth";
+import { dashboardForRole } from "@/lib/auth.config";
 import { MobileNav } from "@/components/public/mobile-nav";
 
 const NAV = [
@@ -16,9 +18,14 @@ const NAV = [
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const config = await getSiteConfig();
+  const session = await auth();
 
   const whatsappHref = config.whatsappNumber
     ? `https://wa.me/${config.whatsappNumber}`
+    : null;
+
+  const userDashboard = session?.user
+    ? dashboardForRole(session.user.role)
     : null;
 
   return (
@@ -46,6 +53,23 @@ export default async function PublicLayout({ children }: { children: React.React
           </ul>
 
           <div className="flex shrink-0 items-center gap-2">
+            {userDashboard ? (
+              <Link
+                href={userDashboard}
+                className="hidden items-center gap-1.5 rounded-lg border border-[var(--color-forest)] bg-white px-3 py-1.5 text-sm font-medium text-[var(--color-forest)] transition-colors hover:bg-[var(--color-cream)] md:inline-flex"
+              >
+                <UserCircle className="size-4" />
+                Mon espace
+              </Link>
+            ) : (
+              <Link
+                href="/connexion"
+                className="hidden items-center gap-1.5 rounded-lg border border-[var(--color-forest)]/40 bg-white px-3 py-1.5 text-sm font-medium text-[var(--color-forest)] transition-colors hover:border-[var(--color-forest)] hover:bg-[var(--color-cream)] md:inline-flex"
+              >
+                <LogIn className="size-4" />
+                Connexion
+              </Link>
+            )}
             {whatsappHref && (
               <a
                 href={whatsappHref}
@@ -60,6 +84,7 @@ export default async function PublicLayout({ children }: { children: React.React
               items={NAV}
               whatsappHref={whatsappHref}
               siteName={config.nomSite}
+              userDashboard={userDashboard}
             />
           </div>
         </nav>
@@ -145,14 +170,23 @@ export default async function PublicLayout({ children }: { children: React.React
           <p>
             © {new Date().getFullYear()} {config.nomSite}. Tous droits réservés.
           </p>
-          <Link
-            href="/admin/login"
-            className="inline-flex items-center gap-1.5 rounded px-2 py-1 text-muted-foreground/70 transition-colors hover:text-[var(--color-forest)]"
-            aria-label="Espace administrateur"
-          >
-            <Lock className="size-3" />
-            Espace admin
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/devenir-partenaire"
+              className="rounded px-2 py-1 transition-colors hover:text-[var(--color-forest)]"
+            >
+              Devenir partenaire
+            </Link>
+            <span className="text-muted-foreground/30">·</span>
+            <Link
+              href="/admin/login"
+              className="inline-flex items-center gap-1.5 rounded px-2 py-1 text-muted-foreground/70 transition-colors hover:text-[var(--color-forest)]"
+              aria-label="Espace administrateur"
+            >
+              <Lock className="size-3" />
+              Espace admin
+            </Link>
+          </div>
         </div>
       </footer>
 

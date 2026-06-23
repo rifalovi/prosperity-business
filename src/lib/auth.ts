@@ -73,7 +73,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { email: email.toLowerCase() },
         });
 
-        // bcrypt même si l'utilisateur n'existe pas (anti enumeration)
+        // bcrypt même si l'utilisateur n'existe pas, ou si le compte
+        // est en attente d'activation (passwordHash null) — anti enumeration.
         const dummyHash = "$2a$12$abcdefghijklmnopqrstuv1234567890ABCDEFGHIJKLMNopqr";
         const passwordOk = await bcrypt.compare(
           password,

@@ -12,24 +12,31 @@ import {
 } from "@/lib/actions/user";
 import { UserModal } from "@/components/admin/user-modal";
 
+export type UserRole = "super_admin" | "admin_contenu" | "membre" | "partenaire";
+
 export type UserRow = {
   id: string;
   email: string;
   nomComplet: string;
-  role: "super_admin" | "admin_contenu";
+  role: UserRole;
   estActif: boolean;
+  enAttenteActivation: boolean;
   derniereConnexion: Date | string | null;
   createdAt: Date | string;
 };
 
-const ROLE_LABEL: Record<UserRow["role"], string> = {
+const ROLE_LABEL: Record<UserRole, string> = {
   super_admin: "Super admin",
   admin_contenu: "Admin contenu",
+  membre: "Membre",
+  partenaire: "Partenaire",
 };
 
-const ROLE_BADGE: Record<UserRow["role"], string> = {
+const ROLE_BADGE: Record<UserRole, string> = {
   super_admin: "bg-[var(--color-forest)] text-white",
-  admin_contenu: "bg-[var(--color-cream)] text-foreground",
+  admin_contenu: "bg-[var(--color-earth)]/15 text-[var(--color-earth)]",
+  membre: "bg-blue-50 text-blue-700",
+  partenaire: "bg-[var(--color-leaf)]/15 text-[var(--color-leaf)]",
 };
 
 export function UsersTable({
@@ -134,15 +141,21 @@ export function UsersTable({
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        u.estActif
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {u.estActif ? "Actif" : "Suspendu"}
-                    </span>
+                    {u.enAttenteActivation ? (
+                      <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                        En attente
+                      </span>
+                    ) : (
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          u.estActif
+                            ? "bg-green-100 text-green-700"
+                            : "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        {u.estActif ? "Actif" : "Suspendu"}
+                      </span>
+                    )}
                   </td>
                   <td className="hidden px-4 py-3 text-xs text-muted-foreground md:table-cell">
                     {u.derniereConnexion

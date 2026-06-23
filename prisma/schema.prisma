@@ -56,6 +56,19 @@ enum StatutArticle {
 enum RoleUser {
   super_admin
   admin_contenu
+  membre
+  partenaire
+}
+
+enum StatutCandidature {
+  en_attente
+  approuvee
+  rejetee
+}
+
+enum TypeCandidature {
+  partenaire
+  membre
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -228,15 +241,76 @@ model User {
   id                String    @id @default(uuid()) @db.Uuid
   email             String    @unique
   nomComplet        String    @map("nom_complet")
-  passwordHash      String    @map("password_hash")
+  passwordHash      String?   @map("password_hash")
   role              RoleUser  @default(admin_contenu)
   estActif          Boolean   @default(true) @map("est_actif")
   derniereConnexion DateTime? @map("derniere_connexion") @db.Timestamptz
+  // Téléphone optionnel (utile pour membres/partenaires, contact, KkiaPay)
+  telephone         String?
+  // Profil partenaire (visible publiquement si publié)
+  organisation      String?
+  secteur           String?
+  bio               String?
+  photoUrl          String?   @map("photo_url")
+  profilPublic      Boolean   @default(false) @map("profil_public")
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
 
+  resetTokens   PasswordResetToken[]
+  candidatureId String?              @unique @map("candidature_id") @db.Uuid
+  candidature   Candidature?         @relation(fields: [candidatureId], references: [id], onDelete: SetNull)
+
   @@index([email])
+  @@index([role, estActif])
   @@map("users")
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// CANDIDATURE (devenir partenaire / membre - validation admin)
+// ────────────────────────────────────────────────────────────────────────────
+
+model Candidature {
+  id           String            @id @default(uuid()) @db.Uuid
+  type         TypeCandidature   @default(partenaire)
+  nomComplet   String            @map("nom_complet")
+  email        String
+  telephone    String?
+  organisation String?
+  secteur      String?
+  message      String
+  statut       StatutCandidature @default(en_attente)
+  notesAdmin   String?           @map("notes_admin")
+  ipHash       String?           @map("ip_hash")
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  traiteLe     DateTime?         @map("traite_le") @db.Timestamptz
+  traiteParId  String?           @map("traite_par_id") @db.Uuid
+
+  user User?
+
+  @@index([statut, createdAt])
+  @@index([email])
+  @@map("candidatures")
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// PASSWORD RESET TOKEN (sert aussi de token d'activation initiale)
+// ────────────────────────────────────────────────────────────────────────────
+
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  // "invitation" = activation initiale (pas de mdp), "reset" = oubli mdp
+  motif     String    @default("reset")
+  expireLe  DateTime  @map("expire_le") @db.Timestamptz
+  utiliseLe DateTime? @map("utilise_le") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expireLe])
+  @@map("password_reset_tokens")
 }
 
 // ────────────────────────────────────────────────────────────────────────────

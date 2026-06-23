@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, MessageCircle } from "lucide-react";
+import { Menu, X, MessageCircle, LogIn, UserCircle } from "lucide-react";
 
 export interface MobileNavItem {
   href: string;
@@ -14,10 +14,12 @@ export function MobileNav({
   items,
   whatsappHref,
   siteName,
+  userDashboard,
 }: {
   items: MobileNavItem[];
   whatsappHref: string | null;
   siteName: string;
+  userDashboard?: string | null;
 }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -122,8 +124,27 @@ export function MobileNav({
             </ul>
           </nav>
 
-          {whatsappHref && (
-            <div className="border-t border-border p-4">
+          <div className="space-y-2 border-t border-border p-4">
+            {userDashboard ? (
+              <Link
+                href={userDashboard}
+                onClick={() => setOpen(false)}
+                className="flex items-center justify-center gap-2 rounded-lg border border-[var(--color-forest)] bg-white px-4 py-3 text-sm font-medium text-[var(--color-forest)] transition-colors hover:bg-[var(--color-cream)]"
+              >
+                <UserCircle className="size-4" />
+                Mon espace
+              </Link>
+            ) : (
+              <Link
+                href="/connexion"
+                onClick={() => setOpen(false)}
+                className="flex items-center justify-center gap-2 rounded-lg border border-[var(--color-forest)] bg-white px-4 py-3 text-sm font-medium text-[var(--color-forest)] transition-colors hover:bg-[var(--color-cream)]"
+              >
+                <LogIn className="size-4" />
+                Connexion
+              </Link>
+            )}
+            {whatsappHref && (
               <a
                 href={whatsappHref}
                 target="_blank"
@@ -134,8 +155,8 @@ export function MobileNav({
                 <MessageCircle className="size-4" />
                 Contact WhatsApp
               </a>
-            </div>
-          )}
+            )}
+          </div>
         </aside>
       </div>
     </>

@@ -16,7 +16,7 @@ export default async function UsersAdminPage() {
   if (!session?.user) redirect("/admin/login");
   if (session.user.role !== "super_admin") redirect("/admin/dashboard");
 
-  const users = await prisma.user.findMany({
+  const rows = await prisma.user.findMany({
     orderBy: [{ estActif: "desc" }, { createdAt: "asc" }],
     select: {
       id: true,
@@ -24,17 +24,23 @@ export default async function UsersAdminPage() {
       nomComplet: true,
       role: true,
       estActif: true,
+      passwordHash: true,
       derniereConnexion: true,
       createdAt: true,
     },
   });
+
+  const users = rows.map(({ passwordHash, ...u }) => ({
+    ...u,
+    enAttenteActivation: passwordHash === null,
+  }));
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-2xl font-bold">Utilisateurs</h1>
         <p className="text-sm text-muted-foreground">
-          Gestion des comptes administrateurs du site.
+          Gestion des comptes : super admins, admins contenu, membres et partenaires.
         </p>
       </div>
 

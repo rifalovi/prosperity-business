@@ -8,8 +8,10 @@ import { AdminSidebar } from "@/components/admin/sidebar";
 
 export function AdminMobileMenu({
   role,
+  badges,
 }: {
   role: "super_admin" | "admin_contenu";
+  badges?: { candidatures?: number };
 }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -88,7 +90,7 @@ export function AdminMobileMenu({
           </div>
 
           <div className="flex-1 overflow-y-auto p-3">
-            <AdminSidebar role={role} />
+            <AdminSidebar role={role} badges={badges} />
           </div>
         </aside>
       </div>

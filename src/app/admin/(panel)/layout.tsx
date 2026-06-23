@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Toaster } from "sonner";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { AdminMobileMenu } from "@/components/admin/mobile-menu";
 import { LogoutButton } from "@/components/admin/logout-button";
@@ -17,6 +18,15 @@ export default async function AdminPanelLayout({
   }
 
   const { nomComplet, role } = session.user;
+  if (role !== "super_admin" && role !== "admin_contenu") {
+    redirect(role === "partenaire" ? "/partenaire/dashboard" : "/espace/dashboard");
+  }
+  const adminRole: "super_admin" | "admin_contenu" = role;
+
+  const candidaturesEnAttente = await prisma.candidature.count({
+    where: { statut: "en_attente" },
+  });
+  const badges = { candidatures: candidaturesEnAttente };
 
   return (
     <div className="flex min-h-screen bg-[var(--color-cream)]">
@@ -28,14 +38,14 @@ export default async function AdminPanelLayout({
           Prosperity Admin
         </Link>
         <div className="mt-6">
-          <AdminSidebar role={role} />
+          <AdminSidebar role={adminRole} badges={badges} />
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between gap-3 border-b border-border bg-white px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3 md:hidden">
-            <AdminMobileMenu role={role} />
+            <AdminMobileMenu role={adminRole} badges={badges} />
             <Link
               href="/admin/dashboard"
               className="font-display text-sm font-bold text-[var(--color-forest)] sm:text-base"
