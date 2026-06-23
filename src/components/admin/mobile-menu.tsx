@@ -11,7 +11,7 @@ export function AdminMobileMenu({
   badges,
 }: {
   role: "super_admin" | "admin_contenu";
-  badges?: { candidatures?: number };
+  badges?: { candidatures?: number; profilsPublics?: number };
 }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();

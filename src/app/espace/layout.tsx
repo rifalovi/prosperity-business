@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Home, BookOpen, FileText, MessageSquare, User } from "lucide-react";
+import { Home, BookOpen, FileText, MessageSquare, IdCard, UserCog } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { PortalLayout } from "@/components/portal/portal-layout";
 
@@ -8,7 +8,8 @@ const NAV = [
   { href: "/espace/formations", label: "Mes formations", icon: BookOpen },
   { href: "/espace/ressources", label: "Ressources", icon: FileText },
   { href: "/espace/messages", label: "Messages", icon: MessageSquare },
-  { href: "/espace/profil", label: "Mon profil", icon: User },
+  { href: "/espace/profil", label: "Profil public", icon: IdCard },
+  { href: "/espace/compte", label: "Mon compte", icon: UserCog },
 ];
 
 export default async function EspaceLayout({ children }: { children: React.ReactNode }) {

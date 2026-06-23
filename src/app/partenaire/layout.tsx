@@ -1,14 +1,14 @@
 import { redirect } from "next/navigation";
-import { Home, FileText, MessageSquare, User, Building2 } from "lucide-react";
+import { Home, FileText, MessageSquare, UserCog, Building2 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { PortalLayout } from "@/components/portal/portal-layout";
 
 const NAV = [
   { href: "/partenaire/dashboard", label: "Tableau de bord", icon: Home },
-  { href: "/partenaire/profil", label: "Profil partenaire", icon: Building2 },
+  { href: "/partenaire/profil", label: "Profil public", icon: Building2 },
   { href: "/partenaire/documents", label: "Documents", icon: FileText },
   { href: "/partenaire/messages", label: "Messages", icon: MessageSquare },
-  { href: "/partenaire/compte", label: "Mon compte", icon: User },
+  { href: "/partenaire/compte", label: "Mon compte", icon: UserCog },
 ];
 
 export default async function PartenaireLayout({ children }: { children: React.ReactNode }) {

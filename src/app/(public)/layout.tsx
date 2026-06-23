@@ -11,9 +11,14 @@ const NAV = [
   { href: "/a-propos", label: "À propos" },
   { href: "/services", label: "Services" },
   { href: "/formations", label: "Formations" },
+  { href: "/partenaires", label: "Partenaires" },
   { href: "/actualites", label: "Actualités" },
   { href: "/galerie", label: "Galerie" },
   { href: "/contact", label: "Contact" },
+];
+
+const FOOTER_EXTRA = [
+  { href: "/membres", label: "Notre communauté" },
 ];
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -157,6 +162,13 @@ export default async function PublicLayout({ children }: { children: React.React
             <h4 className="font-display font-semibold">Navigation</h4>
             <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
               {NAV.slice(1).map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="hover:text-[var(--color-forest)]">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+              {FOOTER_EXTRA.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="hover:text-[var(--color-forest)]">
                     {item.label}

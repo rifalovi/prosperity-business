@@ -71,6 +71,12 @@ enum TypeCandidature {
   membre
 }
 
+enum StatutProfilPublic {
+  prive
+  en_attente
+  publie
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // SERVICE
 // ────────────────────────────────────────────────────────────────────────────
@@ -247,14 +253,20 @@ model User {
   derniereConnexion DateTime? @map("derniere_connexion") @db.Timestamptz
   // Téléphone optionnel (utile pour membres/partenaires, contact, KkiaPay)
   telephone         String?
-  // Profil partenaire (visible publiquement si publié)
+  // Profil public (membres et partenaires)
   organisation      String?
   secteur           String?
   bio               String?
   photoUrl          String?   @map("photo_url")
-  profilPublic      Boolean   @default(false) @map("profil_public")
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  logoUrl           String?   @map("logo_url")
+  // State machine : prive → en_attente → publie (validation admin)
+  statutProfilPublic    StatutProfilPublic @default(prive) @map("statut_profil_public")
+  profilPublicSoumisLe  DateTime?          @map("profil_public_soumis_le") @db.Timestamptz
+  profilPublicPublieLe  DateTime?          @map("profil_public_publie_le") @db.Timestamptz
+  profilPublicNotesAdmin String?           @map("profil_public_notes_admin")
+  slugPublic            String?            @unique @map("slug_public")
+  createdAt             DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime           @updatedAt @map("updated_at") @db.Timestamptz
 
   resetTokens   PasswordResetToken[]
   candidatureId String?              @unique @map("candidature_id") @db.Uuid
@@ -262,6 +274,7 @@ model User {
 
   @@index([email])
   @@index([role, estActif])
+  @@index([statutProfilPublic, role])
   @@map("users")
 }
 

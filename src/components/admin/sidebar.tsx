@@ -15,6 +15,7 @@ import {
   UserCog,
   UserCircle,
   Handshake,
+  IdCard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +24,7 @@ type NavItem = {
   label: string;
   icon: typeof LayoutDashboard;
   requiresSuperAdmin?: boolean;
-  badgeKey?: "candidatures";
+  badgeKey?: "candidatures" | "profilsPublics";
 };
 
 const NAV: NavItem[] = [
@@ -36,6 +37,7 @@ const NAV: NavItem[] = [
   { href: "/admin/temoignages", label: "Témoignages", icon: Quote },
   { href: "/admin/leads", label: "Messages", icon: Inbox },
   { href: "/admin/candidatures", label: "Candidatures", icon: Handshake, badgeKey: "candidatures" },
+  { href: "/admin/profils-publics", label: "Profils publics", icon: IdCard, badgeKey: "profilsPublics" },
   { href: "/admin/utilisateurs", label: "Utilisateurs", icon: UserCog, requiresSuperAdmin: true },
   { href: "/admin/parametres", label: "Paramètres", icon: Settings, requiresSuperAdmin: true },
   { href: "/admin/profil", label: "Mon profil", icon: UserCircle },
@@ -46,7 +48,7 @@ export function AdminSidebar({
   badges,
 }: {
   role: "super_admin" | "admin_contenu";
-  badges?: { candidatures?: number };
+  badges?: { candidatures?: number; profilsPublics?: number };
 }) {
   const pathname = usePathname();
 

@@ -23,10 +23,19 @@ export default async function AdminPanelLayout({
   }
   const adminRole: "super_admin" | "admin_contenu" = role;
 
-  const candidaturesEnAttente = await prisma.candidature.count({
-    where: { statut: "en_attente" },
-  });
-  const badges = { candidatures: candidaturesEnAttente };
+  const [candidaturesEnAttente, profilsPublicsEnAttente] = await Promise.all([
+    prisma.candidature.count({ where: { statut: "en_attente" } }),
+    prisma.user.count({
+      where: {
+        statutProfilPublic: "en_attente",
+        role: { in: ["membre", "partenaire"] },
+      },
+    }),
+  ]);
+  const badges = {
+    candidatures: candidaturesEnAttente,
+    profilsPublics: profilsPublicsEnAttente,
+  };
 
   return (
     <div className="flex min-h-screen bg-[var(--color-cream)]">
