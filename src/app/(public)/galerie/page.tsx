@@ -56,9 +56,9 @@ export default async function GaleriePage() {
       </section>
 
       <section className="py-16">
-        <div className="mx-auto max-w-6xl px-4">
+        <div className="mx-auto max-w-7xl px-4">
           <header className="mb-8">
-            <h2 className="font-display text-2xl font-bold">Nos élevages</h2>
+            <h2 className="font-display text-3xl font-bold">Nos élevages</h2>
             <p className="text-sm text-muted-foreground">
               Vidéos courtes tournées au cœur de la ferme.
             </p>
@@ -66,21 +66,21 @@ export default async function GaleriePage() {
           {elevage.length === 0 ? (
             <EmptyState message="Aucune vidéo d'élevage publiée pour le moment." />
           ) : (
-            <VideoGallery videos={elevage} columns={4} />
+            <VideoGallery videos={elevage} columns={3} />
           )}
         </div>
       </section>
 
       {autres.length > 0 && (
         <section className="bg-[var(--color-cream)] py-16">
-          <div className="mx-auto max-w-6xl px-4">
+          <div className="mx-auto max-w-7xl px-4">
             <header className="mb-8">
-              <h2 className="font-display text-2xl font-bold">Autres vidéos</h2>
+              <h2 className="font-display text-3xl font-bold">Autres vidéos</h2>
               <p className="text-sm text-muted-foreground">
                 Productions, formations, équipe et transformation.
               </p>
             </header>
-            <VideoGallery videos={autres} columns={4} />
+            <VideoGallery videos={autres} columns={3} />
           </div>
         </section>
       )}

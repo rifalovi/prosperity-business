@@ -37,7 +37,7 @@ export function VideoGallery({
 
   return (
     <>
-      <div className={`grid gap-4 ${colsClass}`}>
+      <div className={`grid gap-5 sm:gap-6 ${colsClass}`}>
         {videos.map((video) => (
           <VideoCard key={video.id} video={video} onOpen={() => setOpenId(video.id)} />
         ))}
@@ -65,7 +65,7 @@ export function VideoCard({
     <button
       type="button"
       onClick={onOpen}
-      className="group relative aspect-[9/16] w-full overflow-hidden rounded-xl bg-black focus:outline-none focus:ring-2 focus:ring-[var(--color-leaf)]"
+      className="group relative aspect-[9/16] w-full overflow-hidden rounded-2xl bg-black shadow-md transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:ring-2 hover:ring-[var(--color-leaf)] focus:outline-none focus:ring-2 focus:ring-[var(--color-leaf)]"
       aria-label={`Lire la vidéo : ${video.altText}`}
     >
       {thumbnail ? (
@@ -73,7 +73,7 @@ export function VideoCard({
         <img
           src={thumbnail}
           alt={video.altText}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-115"
           loading="lazy"
         />
       ) : (
