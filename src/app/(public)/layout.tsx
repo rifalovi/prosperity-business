@@ -1,25 +1,36 @@
 import Link from "next/link";
-import { Lock, LogIn, UserCircle } from "lucide-react";
+import { ChevronDown, Lock, LogIn, UserCircle } from "lucide-react";
 import { Toaster } from "sonner";
 import { getSiteConfig } from "@/lib/site-config";
 import { auth } from "@/lib/auth";
 import { dashboardForRole } from "@/lib/auth.config";
 import { MobileNav } from "@/components/public/mobile-nav";
 
-const NAV = [
+type NavLink = { href: string; label: string };
+type NavGroup = { label: string; children: NavLink[] };
+type NavEntry = NavLink | NavGroup;
+
+const NAV: NavEntry[] = [
   { href: "/", label: "Accueil" },
-  { href: "/a-propos", label: "À propos" },
+  {
+    label: "Découvrir",
+    children: [
+      { href: "/a-propos", label: "À propos" },
+      { href: "/partenaires", label: "Partenaires" },
+      { href: "/membres", label: "Notre communauté" },
+      { href: "/galerie", label: "Galerie" },
+    ],
+  },
   { href: "/services", label: "Services" },
   { href: "/formations", label: "Formations" },
-  { href: "/partenaires", label: "Partenaires" },
   { href: "/actualites", label: "Actualités" },
-  { href: "/galerie", label: "Galerie" },
   { href: "/contact", label: "Contact" },
 ];
 
-const FOOTER_EXTRA = [
-  { href: "/membres", label: "Notre communauté" },
-];
+// Liste aplatie pour le footer (toutes les pages sauf l'accueil)
+const FOOTER_LINKS: NavLink[] = NAV.flatMap((item) =>
+  "children" in item ? item.children : [item],
+).filter((item) => item.href !== "/");
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const config = await getSiteConfig();
@@ -44,17 +55,41 @@ export default async function PublicLayout({ children }: { children: React.React
             {config.nomSite}
           </Link>
 
-          <ul className="hidden gap-6 md:flex">
-            {NAV.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="text-sm font-medium text-foreground transition-colors hover:text-[var(--color-leaf)]"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
+          <ul className="hidden items-center gap-6 md:flex">
+            {NAV.map((item) =>
+              "children" in item ? (
+                <li key={item.label} className="group relative">
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-foreground transition-colors group-hover:text-[var(--color-leaf)] group-focus-within:text-[var(--color-leaf)]"
+                  >
+                    {item.label}
+                    <ChevronDown className="size-4 transition-transform group-hover:rotate-180" />
+                  </button>
+                  <ul className="invisible absolute left-0 top-full z-50 min-w-48 translate-y-1 rounded-xl border border-border bg-white p-1.5 opacity-0 shadow-lg transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                    {item.children.map((child) => (
+                      <li key={child.href}>
+                        <Link
+                          href={child.href}
+                          className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--color-cream)] hover:text-[var(--color-forest)]"
+                        >
+                          {child.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ) : (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-sm font-medium text-foreground transition-colors hover:text-[var(--color-leaf)]"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ),
+            )}
           </ul>
 
           <div className="flex shrink-0 items-center gap-2">
@@ -161,14 +196,7 @@ export default async function PublicLayout({ children }: { children: React.React
           <div className="sm:col-span-2 md:col-span-1">
             <h4 className="font-display font-semibold">Navigation</h4>
             <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-              {NAV.slice(1).map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href} className="hover:text-[var(--color-forest)]">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-              {FOOTER_EXTRA.map((item) => (
+              {FOOTER_LINKS.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="hover:text-[var(--color-forest)]">
                     {item.label}

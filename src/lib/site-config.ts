@@ -19,7 +19,7 @@ export type SiteConfigData = {
 const FALLBACK: SiteConfigData = {
   nomSite: "Prosperity Business",
   slogan: "Nourrir. Former. Prospérer.",
-  emailContact: "contact@prosperitybusiness.bj",
+  emailContact: "contact@prosperity-business.com",
   telephone1: null,
   telephone2: null,
   adresse: "Allada, Bénin",

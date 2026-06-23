@@ -15,7 +15,7 @@ async function main() {
       data: {
         nomSite: "Prosperity Business",
         slogan: "Nourrir. Former. Prospérer.",
-        emailContact: "contact@prosperitybusiness.bj",
+        emailContact: "contact@prosperity-business.com",
         telephone1: "+229 01 96 21 15 34",
         telephone2: "+229 01 95 35 27 31",
         adresse: "Allada, République du Bénin",

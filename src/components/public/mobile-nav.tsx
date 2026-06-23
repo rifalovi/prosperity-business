@@ -5,10 +5,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, MessageCircle, LogIn, UserCircle } from "lucide-react";
 
-export interface MobileNavItem {
+export interface MobileNavLink {
   href: string;
   label: string;
 }
+
+export interface MobileNavGroup {
+  label: string;
+  children: MobileNavLink[];
+}
+
+export type MobileNavItem = MobileNavLink | MobileNavGroup;
 
 export function MobileNav({
   items,
@@ -102,6 +109,37 @@ export function MobileNav({
           <nav className="flex-1 overflow-y-auto px-2 py-3">
             <ul className="space-y-1">
               {items.map((item) => {
+                if ("children" in item) {
+                  return (
+                    <li key={item.label} className="pt-2">
+                      <p className="px-4 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        {item.label}
+                      </p>
+                      <ul className="space-y-1">
+                        {item.children.map((child) => {
+                          const active =
+                            pathname === child.href ||
+                            pathname.startsWith(`${child.href}/`);
+                          return (
+                            <li key={child.href}>
+                              <Link
+                                href={child.href}
+                                onClick={() => setOpen(false)}
+                                className={`block rounded-lg px-4 py-3 text-base font-medium transition-colors ${
+                                  active
+                                    ? "bg-[var(--color-forest)] text-white"
+                                    : "text-foreground hover:bg-[var(--color-cream)]"
+                                }`}
+                              >
+                                {child.label}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </li>
+                  );
+                }
                 const active =
                   pathname === item.href ||
                   (item.href !== "/" && pathname.startsWith(`${item.href}/`));
