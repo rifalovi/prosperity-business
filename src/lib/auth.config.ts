@@ -26,6 +26,11 @@ export function dashboardForRole(role: RoleUser): string {
 }
 
 export const authConfig = {
+  // Faire confiance au host forwardé par le proxy Vercel. Sans cela, sur un
+  // domaine personnalisé, Auth.js valide l'origine des requêtes mutantes
+  // (POST des server actions) contre AUTH_URL : un mismatch renvoie une session
+  // vide et fait échouer les actions (ex. changement de mot de passe forcé).
+  trustHost: true,
   pages: {
     signIn: "/connexion",
     error: "/connexion",
